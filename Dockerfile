@@ -13,7 +13,6 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR /opt/mastodon
-COPY Gemfile* package.json yarn.lock /opt/mastodon/
 
 RUN apt update && \
     apt-get install -y --no-install-recommends build-essential \
@@ -31,14 +30,23 @@ RUN apt update && \
         ca-certificates \
         libreadline8 \
         python3 \
-        shared-mime-info && \
-    bundle config set --local deployment 'true' && \
+        shared-mime-info
+
+COPY Gemfile* /opt/mastodon/ 
+
+RUN bundle config set --local deployment 'true' && \
     bundle config set --local without 'development test' && \
     bundle config set silence_root_warning true && \
     bundle install -j"$(nproc)" && \
-    # don't need .gem files once installed
+    # don't need .gem files once installed, but we do need to keep the git cloned cache
     rm -rf /opt/mastodon/vendor/bundle/ruby/3.0.0/cache/*.gem && \
-    yarn install --pure-lockfile
+    # clean build artifacts
+    # https://github.com/rubygems/rubygems/issues/3958
+    find /opt/mastodon/vendor/bundle/ruby/3.0.0 -name '*.o' -delete
+
+
+COPY package.json yarn.lock /opt/mastodon
+RUN yarn install --pure-lockfile
 
 FROM node:${NODE_VERSION}
 
