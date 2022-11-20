@@ -36,6 +36,8 @@ RUN apt update && \
     bundle config set --local without 'development test' && \
     bundle config set silence_root_warning true && \
     bundle install -j"$(nproc)" && \
+    # don't need .gem files once installed
+    rm -rf /opt/mastodon/vendor/bundle/ruby/3.0.0/cache/*.gem && \
     yarn install --pure-lockfile
 
 FROM node:${NODE_VERSION}
