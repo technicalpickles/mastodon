@@ -48,7 +48,11 @@ COPY --link --from=ruby /opt/ruby /opt/ruby
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND="noninteractive" \
-    PATH="${PATH}:/opt/ruby/bin:/opt/mastodon/bin"
+    PATH="${PATH}:/opt/ruby/bin:/opt/mastodon/bin" \
+    RAILS_ENV="production" \
+    NODE_ENV="production" \
+    RAILS_SERVE_STATIC_FILES="true" \
+    BIND="0.0.0.0"
 
 RUN apt-get update && \
     echo "Etc/UTC" > /etc/localtime && \
@@ -76,11 +80,6 @@ RUN apt-get update && \
 
 COPY --chown=mastodon:mastodon . /opt/mastodon
 COPY --chown=mastodon:mastodon --from=build /opt/mastodon /opt/mastodon
-
-ENV RAILS_ENV="production" \
-    NODE_ENV="production" \
-    RAILS_SERVE_STATIC_FILES="true" \
-    BIND="0.0.0.0"
 
 # Set the run user
 USER mastodon
