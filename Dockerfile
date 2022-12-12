@@ -45,7 +45,7 @@ RUN bundle config set --local deployment 'true' && \
     find /opt/mastodon/vendor/bundle/ruby -name '*.o' -delete
 
 
-COPY package.json yarn.lock /opt/mastodon
+COPY package.json yarn.lock /opt/mastodon/
 RUN yarn install --pure-lockfile --network-timeout 600000
 
 FROM node:${NODE_VERSION}
