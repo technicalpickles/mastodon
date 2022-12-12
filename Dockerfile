@@ -39,10 +39,10 @@ RUN bundle config set --local deployment 'true' && \
     bundle config set silence_root_warning true && \
     bundle install -j"$(nproc)" && \
     # don't need .gem files once installed, but we do need to keep the git cloned cache
-    rm -rf /opt/mastodon/vendor/bundle/ruby/3.0.0/cache/*.gem && \
+    rm -rf /opt/mastodon/vendor/bundle/ruby/k/cache/*.gem && \
     # clean build artifacts
     # https://github.com/rubygems/rubygems/issues/3958
-    find /opt/mastodon/vendor/bundle/ruby/3.0.0 -name '*.o' -delete
+    find /opt/mastodon/vendor/bundle/ruby -name '*.o' -delete
 
 
 COPY package.json yarn.lock /opt/mastodon
